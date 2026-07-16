@@ -16,11 +16,21 @@ php_c2pa-v0.1.0_php8.4-x86_64-linux-glibc-nts.tgz
 php_c2pa-v0.1.0_php8.3-arm64-linux-glibc-nts.tgz
 ```
 
-Each tarball contains the compiled extension. Unpack it somewhere your PHP
-can read and point your `php.ini` at it:
+The recommended path is [PIE](https://github.com/php/pie), which picks the
+right tarball for your platform and PHP, verifies it, and wires up your
+`php.ini`:
+
+```sh
+pie install ericmann/ext-c2pa
+```
+
+Or manually: each tarball contains the compiled extension as `c2pa.so`
+(that exact name on macOS too — it's PIE's convention). Verify the
+`.sha256` sidecar, unpack it somewhere your PHP can read, and point your
+`php.ini` at it:
 
 ```ini
-extension=/path/to/libc2pa.so   ; .dylib on macOS
+extension=/path/to/c2pa.so
 ```
 
 Verify:
@@ -29,10 +39,6 @@ Verify:
 $ php -m | grep c2pa
 c2pa
 ```
-
-> The package is not yet listed on Packagist/PIE, so `pie install
-> ericmann/ext-c2pa` does not resolve yet — grab the tarball from the
-> release directly.
 
 ## Building from source
 
