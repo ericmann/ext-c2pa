@@ -28,3 +28,11 @@ accepted = [
 # cmake drivers, ...) and dev-dependencies never ship.
 ignore-build-dependencies = true
 ignore-dev-dependencies = true
+
+# LOCAL DEVIATION from template/managed/about.toml (re-apply if bin/sync
+# overwrites; candidate for upstreaming): the manifest documents the
+# third-party code we ship, not the extension itself — ext-c2pa is
+# GPL-2.0-or-later (deliberately absent from `accepted`) and
+# `publish = false`, which cargo-about treats as private.
+[private]
+ignore = true

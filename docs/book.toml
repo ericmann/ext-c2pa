@@ -6,6 +6,6 @@ language    = "en"
 src         = "src"
 
 [output.html]
-git-repository-url  = "https://github.com/ericmann/wp-c2pa"
-edit-url-template   = "https://github.com/ericmann/wp-c2pa/edit/main/ext/docs/{path}"
+git-repository-url  = "https://github.com/ericmann/ext-c2pa"
+edit-url-template   = "https://github.com/ericmann/ext-c2pa/edit/main/docs/{path}"
 site-url            = "/"

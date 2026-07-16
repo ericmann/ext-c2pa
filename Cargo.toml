@@ -5,7 +5,7 @@ edition       = "2021"
 rust-version  = "1.89"
 license       = "GPL-2.0-or-later"
 description   = "PHP 8.3+ native C2PA Content Credentials: read/validate manifests and sign Media Library images incl. derivatives."
-repository    = "https://github.com/ericmann/wp-c2pa"
+repository    = "https://github.com/ericmann/ext-c2pa"
 readme        = "README.md"
 publish       = false
 

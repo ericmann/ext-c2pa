@@ -172,7 +172,7 @@ jobs:
           # here on x86_64 legs from .ext-template.conf's X86_RUSTFLAGS
           # (e.g. ext-turbovec's -C target-cpu=x86-64-v3). Empty for most
           # extensions.
-          RUSTFLAGS: "-D warnings ${{ matrix.arch == 'x86_64' && '{{X86_RUSTFLAGS}}' || '' }}"
+          RUSTFLAGS: "-D warnings ${{ matrix.arch == 'x86_64' && '' || '' }}"
         run: cargo build --release
 
       - name: Stage artifact

@@ -1,14 +1,14 @@
 name: Docs
 
 # Builds the mdbook in docs/ and deploys it to GitHub Pages at
-# https://.
+# https://c2pa.eamann.com.
 #
 # One-time setup outside of this workflow:
 #
-#   1. DNS — the  CNAME to `displacetech.github.io.` at the
+#   1. DNS — the c2pa.eamann.com CNAME to `displacetech.github.io.` at the
 #      registrar (Cloudflare in our case).
 #   2. Repo settings → Pages → Source: GitHub Actions.
-#   3. Repo settings → Pages → Custom domain: .
+#   3. Repo settings → Pages → Custom domain: c2pa.eamann.com.
 #   4. Repo settings → Pages → Enforce HTTPS once GitHub finishes
 #      provisioning the cert.
 #
@@ -69,7 +69,7 @@ jobs:
         # GitHub Pages reads CNAME from the deployed artifact root.
         # Re-injecting on every deploy means the custom domain config
         # survives Pages-settings resets and Pages-source migrations.
-        run: echo '' > docs/book/CNAME
+        run: echo 'c2pa.eamann.com' > docs/book/CNAME
 
       - name: Inject .nojekyll
         # mdbook output paths include underscores (e.g. internal
