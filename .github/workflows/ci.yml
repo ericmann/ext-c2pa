@@ -32,11 +32,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential libclang-dev
 
-      # Pinned to 2.36.0: setup-php 2.37.x stopped installing PHP on the
-      # macos-14 runners on 2026-06-12 (empty-variable cascade inside its
-      # brew path; minimal repro in ext-template's "macOS probe" workflow).
-      # Re-probe and unpin when upstream ships a fix.
-      - uses: shivammathur/setup-php@2.36.0
+      - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
           tools: none
@@ -62,13 +58,6 @@ jobs:
         # 8.5 is the current stable; 8.4 is the most-deployed; 8.3 is
         # security-only through end of 2026 but still widely installed.
         php: ['8.3', '8.4', '8.5']
-        exclude:
-          # setup-php cannot currently install PHP 8.5 on the macos-14
-          # runners (2026-06-12: 2.37.x fails for every PHP version there,
-          # and 2.36.0 predates 8.5). Re-add this leg when ext-template's
-          # "macOS probe" workflow passes on @v2 again.
-          - os: macos-14
-            php: '8.5'
     steps:
       - uses: actions/checkout@v4
 
@@ -83,11 +72,7 @@ jobs:
         # `true` when the extension needs nothing beyond Xcode CLT.
         run: true
 
-      # Pinned to 2.36.0: setup-php 2.37.x stopped installing PHP on the
-      # macos-14 runners on 2026-06-12 (empty-variable cascade inside its
-      # brew path; minimal repro in ext-template's "macOS probe" workflow).
-      # Re-probe and unpin when upstream ships a fix.
-      - uses: shivammathur/setup-php@2.36.0
+      - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
           tools: none
