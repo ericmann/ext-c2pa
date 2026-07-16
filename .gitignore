@@ -28,3 +28,6 @@ tests/phpt/*.mem
 # than committing a single copy that would drift from each contributor's
 # local PHP.
 /run-tests.php
+
+# mdbook output (built + deployed by .github/workflows/docs.yml)
+/docs/book/
