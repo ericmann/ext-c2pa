@@ -14,7 +14,7 @@ cargo update --workspace
 # 2. Verify locally
 cargo fmt --all --check
 cargo clippy --all-targets -- -D warnings
-WHISPER_TEST_MODEL=$PWD/models/MODEL-FIXTURE make test
+make test
 composer validate composer.json
 
 # 3. Land the bump
@@ -40,14 +40,14 @@ Two files carry the version explicitly:
 
 - `Cargo.toml` (`[package].version`). The cargo build script consumes
   this for `CARGO_PKG_VERSION`; we don't surface it to PHP today, but
-  may in a future `Displace\C2pa\VERSION` constant.
+  may in a future `Automattic\VIP\C2PA\VERSION` constant.
 - The `git` tag (`v{semver}`). PIE reads its version from the tag, not
   from `composer.json`. Composer's docs are explicit:
   > "PIE follows the usual PHP extension build and install process";
   > tags are how Packagist (and therefore PIE) learn about releases.
 
 `composer.json` does **not** carry a version key — that would conflict
-with the tag-derived version Composer c2pas. The `branch-alias` under
+with the tag-derived version Composer computes. The `branch-alias` under
 `extra` exists only so `dev-main` resolves to `0.x.x-dev` for users
 pinning a dev branch.
 
@@ -63,8 +63,8 @@ cargo clippy --all-targets -- -D warnings
 # Build the release-mode artifact at least once locally
 make release
 
-# Full PHPT suite against a real model
-WHISPER_TEST_MODEL=$PWD/models/MODEL-FIXTURE make test
+# Full PHPT suite
+make test
 
 # composer.json shape
 composer validate composer.json
@@ -118,7 +118,7 @@ Each job:
 3. Runs `cargo build --release`.
 4. Stages `c2pa.so` / `c2pa.dylib` in the right shape.
 5. Tarballs it as
-   `php_c2pa-{version}_php{minor}-{arch}-{os}[-{libc}].tar.gz`
+   `php_c2pa-{version}_php{minor}-{arch}-{os}-{libc}-{tsmode}.tgz`
    per [PIE's filename convention](https://github.com/php/pie/blob/1.5.x/docs/extension-maintainers.md).
 6. Computes a `.sha256` sidecar.
 7. Uploads both to the GitHub Release (created as **draft**).
@@ -130,7 +130,7 @@ to the same one.
 
 After CI is green:
 
-1. Visit https://github.com/DisplaceTech/ext-c2pa/releases.
+1. Visit https://github.com/ericmann/ext-c2pa/releases.
 2. Find the draft for the tag, click *Edit*.
 3. Write the release notes. Suggested skeleton:
    ```
@@ -164,10 +164,10 @@ by default. The first time you ship `ext-c2pa`, register the package:
 
 1. Go to <https://packagist.org/login/> and sign in with GitHub.
 2. Click **Submit** in the top nav.
-3. Paste `https://github.com/DisplaceTech/ext-c2pa` into the repo
+3. Paste `https://github.com/ericmann/ext-c2pa` into the repo
    URL field and submit.
 4. Packagist reads `composer.json`, validates the `type: php-ext`
-   block, and registers the package as `displace/ext-c2pa`.
+   block, and registers the package as `ericmann/ext-c2pa` (from composer.json).
 
 That step is one-time. After it, every tag pushed to the repo needs
 to make it back to Packagist. Two ways:
@@ -192,7 +192,7 @@ Once Packagist has indexed a stable version (`vX.Y.Z` with no
 version is **locked**. Re-tagging the same name at a different
 commit gets rejected:
 
-> The displace/ext-c2pa package of which you are a maintainer had
+> The ericmann/ext-c2pa package of which you are a maintainer had
 > an attempted update to version vX.Y.Z blocked, because a published
 > stable version's source/dist reference changed in your git
 > repository.
@@ -216,7 +216,7 @@ the new version within a minute or two. If it doesn't:
 # Manual nudge from the maintainer's machine:
 curl -XPOST -H 'content-type:application/json' \
   "https://packagist.org/api/update-package?username=<you>&apiToken=<token>" \
-  -d '{"repository":{"url":"https://github.com/DisplaceTech/ext-c2pa"}}'
+  -d '{"repository":{"url":"https://github.com/ericmann/ext-c2pa"}}'
 ```
 
 If that updates Packagist but the auto-hook didn't fire, check the
@@ -230,14 +230,14 @@ curl -L --output pie.phar https://github.com/php/pie/releases/latest/download/pi
 chmod +x pie.phar && sudo mv pie.phar /usr/local/bin/pie
 
 # Install your freshly released extension
-pie install displace/ext-c2pa
+pie install ericmann/ext-c2pa
 
 # Confirm
 php -m | grep c2pa
 ```
 
 PIE will fetch the correct
-`php_c2pa-{version}_php{minor}-{arch}-{os}-{libc}.tar.gz` for the
+`php_c2pa-{version}_php{minor}-{arch}-{os}-{libc}-{tsmode}.tgz` for the
 caller's environment, extract `c2pa.{so,dylib}`, and drop it into the
 PHP extension directory.
 
@@ -271,28 +271,23 @@ for now.
 ## Caveats / known gaps
 
 - **ZTS PHP** is enabled in `composer.json` (`support-zts: true`) and
-  the code is thread-safe by design (the model context is shared
-  read-only; every `transcribe()` builds and drops its own c2pa
-  state). It is *not* exercised in CI yet — neither
-  the regular CI matrix nor the release workflow builds against a
-  ZTS-PHP runner. Treat ZTS as "should work, please report bugs".
+  the code is thread-safe by design (no global mutable state; every
+  `Reader`/`Builder`/`Signer` is an independent value). It is *not*
+  exercised in CI yet — neither the regular CI matrix nor the release
+  workflow builds against a ZTS-PHP runner. Treat ZTS as "should
+  work, please report bugs".
 - **Windows** is intentionally excluded. The `os-families-exclude`
   block in `composer.json` makes PIE skip Windows hosts cleanly.
 - **musl Linux** is not in the release matrix. The build script's
   `.cargo/config.toml` carries the right `crt-static` opt-out so
   someone building from source on Alpine should succeed, but we don't
   ship binaries.
-- **Apple Metal** is opt-in via the `metal` cargo feature
-  (`make release FEATURES=metal`). The default release tarball is
-  CPU-only, even on macos-14, because the Metal-enabled build embeds
-  Apple Silicon GPU code that we haven't validated against the macos
-  GitHub runner's hardware mix yet.
 
 ## When something goes wrong
 
 | Symptom                                              | First thing to check |
 | ---------------------------------------------------- | -------------------- |
 | Release workflow doesn't fire                        | Did you push the tag? `git push --tags`. |
-| One matrix leg fails to compile c2pa.cpp            | Check the runner's cmake version — bump system-deps install if needed. |
+| One matrix leg fails to build                        | Usually the PHP-headers/bindgen layer — check the setup-php and libclang install steps in that leg's log. |
 | PIE can't find a matching binary                     | Verify the tarball filename — PIE matches verbatim on arch/os/libc. |
 | `php -m` doesn't show `c2pa` after `pie install`    | Re-run PIE with `-v` to see where it dropped the artifact and which `php.ini` it added to. |
