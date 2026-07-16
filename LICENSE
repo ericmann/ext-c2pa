@@ -1,0 +1,20 @@
+wp-c2pa
+Copyright (C) Automattic, Inc.
+
+This program is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation; either version 2 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+SPDX-License-Identifier: GPL-2.0-or-later
+
+The full text of the GNU General Public License version 2 is available at:
+https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+
+NOTE: drop the canonical GPL-2.0 license text in here before publishing.
+The "or later" clause is intentional and load-bearing: it lets us link the
+Apache-2.0/MIT dependencies (c2pa-rs, ext-php-rs) by exercising the GPLv3 option.

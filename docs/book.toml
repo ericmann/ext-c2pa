@@ -1,0 +1,11 @@
+[book]
+title       = "ext-c2pa"
+description = "PHP 8.3+ native C2PA Content Credentials: read/validate manifests and sign Media Library images incl. derivatives."
+authors     = ["Automattic, Inc."]
+language    = "en"
+src         = "src"
+
+[output.html]
+git-repository-url  = "https://github.com/ericmann/wp-c2pa"
+edit-url-template   = "https://github.com/ericmann/wp-c2pa/edit/main/ext/docs/{path}"
+site-url            = "/"
